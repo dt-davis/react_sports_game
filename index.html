@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Basics sports game</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type='text/babel'>
+
+        class Team extends React.Component{
+            constructor(props){
+                super(props)
+
+                this.state = {
+                    shotsTaken: 0,
+                    shotsScored: 0
+                }
+
+                this.shotSounds  = new Audio('./assets/audio/Swing.mp3')
+                this.shotScored = new Audio('./assets/audio/Explosion.mp3')
+            }
+            
+            shotHandler = () => {
+                let shotsScored = this.state.shotsScored
+                this.shotSounds.play()
+                if  (Math.random() > 0.5){
+                    shotsScored += 1
+                    setTimeout(() => {
+                        this.shotScored.play()
+                    }, 175)
+                }
+                
+                
+                this.setState((state, props) =>(
+                {
+                    shotsTaken: state.shotsTaken + 1,
+                    shotsScored
+                }))
+            }
+
+            render(){
+                let shotPercentDiv 
+                
+                if(this.state.shotsTaken){
+                    let shotPercentage = Math.round((this.state.shotsScored / this.state.shotsTaken) * 100)
+                    shotPercentDiv = <div>Shot Percent: {shotPercentage} </div>
+                }
+                return(
+                    <div className ='Team'>
+                        <h1>{this.props.name}</h1>
+                        <img src={this.props.logo} alt={this.props.name}/>
+                        <div>shots taken: {this.state.shotsTaken}</div>
+                        <div>shots scored: {this.state.shotsScored}</div>
+                        {shotPercentDiv}
+                        <button onClick ={this.shotHandler}>SHOOT</button>
+                    </div>
+                )
+            }
+        }
+        
+        function Game(props){
+            return(
+            <div className='Game'>
+            <h1> Welcome to {props.venue}</h1>
+                <Team 
+                    name='Piegons'
+                    logo=''
+                /> 
+                <Team
+                    name ="Bats"  
+                    logo=''
+                />
+            </div>
+            )
+        }
+        
+        function App(props){
+            return (
+                <div className="App">
+                    <Game venue='Cinnibar Island Gym' />
+                </div>
+            )
+        }
+        
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        )
+
+        
+    </script>
+</body>
+</html>
+
